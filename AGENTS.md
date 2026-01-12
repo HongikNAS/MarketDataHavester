@@ -3,13 +3,24 @@
 환율, 주가, 채권 등 금융 시장 데이터를 수집하고 저장하는 Django 기반 서비스입니다.
 
 ## 작업 방법
-1. Plan mode로 Ticket 이름으로 작업 계획서를 작성합니다.
-2. 작업 계획서는 Overview, Proposed Changes, TODO, Verification Plan 으로 구성하며, Future Work을 포함할 수도 있습니다.
-3. Plan mode로 작성된 Ticket 이름으로 Branch를 생성합니다.
-4. ToDo 단위로 Commit 을 작성하며, Commit message의 내용은 코드 변경사항을 충분히 설명할 수 있어야 합니다.
-5. Verification Plan 은 구현된 내용을 어떻게 Test 할지 작성합니다.
-6. 모든 구현에 대하여 Unit 테스트를 작성합니다. 분기될 수 있는 부분에 대해 상세히 Unit 테스트를 작성합니다.
-7. 모든 변경사항은 반드시 테스트를 통과한 후에 Push 합니다.
+[!IMPORTANT]
+> 아래 규칙은 반드시 준수해야 합니다.
+
+### 1. 계획 (Planning)
+- [ ] Plan mode로 Ticket의 이름의 작업 계획서를 작성 (예: docs/HON-5.md)
+- [ ] 계획서에 Overview, Proposed Changes, TODO, Verification Plan 포함
+
+### 2. 구현 (Execution)
+> [!CAUTION]
+> **TODO 단위로 커밋 필수!** 여러  TODO 을 한 번에 커밋하지 않습니다.
+
+- [ ] 각 TODO 완료 시 즉시 커밋
+- [ ] 커밋 메시지는 변경사항을 충분히 설명
+- [ ] 모든 구현에는 Unit 테스트를 작성
+
+### 3. 검증 (VERIFICATION)
+- [ ] 모든 테스트 통과 확인
+- [ ] Push 전 최종 점검
 
 ## 기술 스택
 
@@ -69,6 +80,11 @@ uv run python manage.py runserver
 - **Linter**: Ruff
 - **Import 순서**: isort 규칙 준수
 - **테스트**: pytest-django 사용
+
+## 데이터베이스
+
+- 모든 Table에는 created_at, updated_at 컬럼을 포함합니다.
+- created_at, updated_at 컬럼은 auto_now_add, auto_now 옵션을 사용합니다.
 
 ## 관련 문서
 
