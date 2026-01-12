@@ -197,3 +197,119 @@ class SaveExchangeRatesTestCase(TestCase):
 
         usd = ExchangeRate.objects.get(code="USD")
         self.assertEqual(usd.base_rate, Decimal("1432.50"))  # 업데이트됨
+
+
+class ExchangeRateAPITestCase(TestCase):
+    """환율 API 테스트"""
+
+    def setUp(self):
+        """테스트 데이터 생성"""
+        self.usd_rate = ExchangeRate.objects.create(
+            code="USD",
+            name="미국 달러",
+            base_rate=Decimal("1432.50"),
+            cash_buy_rate=Decimal("1460.00"),
+            cash_sell_rate=Decimal("1405.00"),
+            date=date(2024, 1, 15),
+        )
+        self.eur_rate = ExchangeRate.objects.create(
+            code="EUR",
+            name="유로",
+            base_rate=Decimal("1550.00"),
+            date=date(2024, 1, 15),
+        )
+        self.usd_rate_old = ExchangeRate.objects.create(
+            code="USD",
+            name="미국 달러",
+            base_rate=Decimal("1420.00"),
+            date=date(2024, 1, 14),
+        )
+
+    def test_list_exchange_rates(self):
+        """환율 목록 조회 테스트"""
+        from django.test import Client
+
+        client = Client()
+        response = client.get("/api/exchange-rates/")
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertIn("results", data)
+        self.assertEqual(len(data["results"]), 3)
+
+    def test_filter_by_code(self):
+        """통화 코드 필터 테스트"""
+        from django.test import Client
+
+        client = Client()
+        response = client.get("/api/exchange-rates/?code=USD")
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(len(data["results"]), 2)
+        for item in data["results"]:
+            self.assertEqual(item["code"], "USD")
+
+    def test_filter_by_date(self):
+        """날짜 필터 테스트"""
+        from django.test import Client
+
+        client = Client()
+        response = client.get("/api/exchange-rates/?date=2024-01-15")
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(len(data["results"]), 2)
+
+    def test_by_code(self):
+        """통화 코드별 조회 테스트"""
+        from django.test import Client
+
+        client = Client()
+        response = client.get("/api/exchange-rates/USD/")
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(len(data["results"]), 2)
+
+    def test_by_code_and_date(self):
+        """통화 코드 + 날짜 조회 테스트"""
+        from django.test import Client
+
+        client = Client()
+        response = client.get("/api/exchange-rates/USD/dates/2024-01-15/")
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(data["code"], "USD")
+        self.assertEqual(data["date"], "2024-01-15")
+        self.assertEqual(data["base_rate"], "1432.5000")
+
+    def test_by_code_and_date_not_found(self):
+        """존재하지 않는 환율 조회 테스트"""
+        from django.test import Client
+
+        client = Client()
+        response = client.get("/api/exchange-rates/USD/dates/2024-01-01/")
+        self.assertEqual(response.status_code, 404)
+
+    @patch("apps.exchange_rates.views.save_exchange_rates")
+    def test_fetch_today(self, mock_save):
+        """오늘 환율 수집 테스트"""
+        from django.test import Client
+
+        mock_save.return_value = 10
+        client = Client()
+        response = client.post("/api/exchange-rates/fetch/")
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(data["count"], 10)
+
+    @patch("apps.exchange_rates.views.save_exchange_rates")
+    def test_fetch_by_date(self, mock_save):
+        """특정 날짜 환율 수집 테스트"""
+        from django.test import Client
+
+        mock_save.return_value = 5
+        client = Client()
+        response = client.post("/api/exchange-rates/fetch/dates/2024-01-10/")
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(data["date"], "2024-01-10")
+        self.assertEqual(data["count"], 5)
+

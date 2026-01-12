@@ -31,6 +31,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    # Third-party apps
+    "rest_framework",
     # Local apps
     "apps.exchange_rates",
 ]
@@ -122,3 +124,11 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # Korea Exim Bank API
 KOREAEXIM_API_KEY = os.getenv("KOREAEXIM_API_KEY", "")
 KOREAEXIM_API_URL = "https://oapi.koreaexim.go.kr/site/program/financial/exchangeJSON"
+
+
+# Django REST Framework
+REST_FRAMEWORK = {
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 20,
+}
+
