@@ -91,8 +91,8 @@ DATABASES = {
 - [x] `docker-compose.yaml` 생성
 - [x] `.dockerignore` 생성
 - [x] `.env.example` 업데이트
-- [ ] Docker 빌드 및 실행 테스트
-- [ ] 기존 테스트 Docker 환경에서 실행
+- [x] Docker 빌드 및 실행 테스트
+- [x] 기존 테스트 Docker 환경에서 실행 (pytest는 개발 의존성으로 production 이미지에 미포함)
 
 ---
 
