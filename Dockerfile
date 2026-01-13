@@ -23,14 +23,17 @@ COPY pyproject.toml uv.lock ./
 # Install dependencies
 RUN uv sync --frozen --no-dev
 
+# Add venv to PATH for direct python access
+ENV PATH="/app/.venv/bin:$PATH"
+
 # Copy application code
 COPY . .
 
 # Collect static files
-RUN uv run python manage.py collectstatic --noinput
+RUN python manage.py collectstatic --noinput
 
 # Expose port
 EXPOSE 8000
 
 # Run with gunicorn
-CMD ["uv", "run", "gunicorn", "--bind", "0.0.0.0:8000", "config.wsgi:application"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "config.wsgi:application"]
