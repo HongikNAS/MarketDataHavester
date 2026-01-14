@@ -10,6 +10,7 @@ Django 앱과 PostgreSQL 데이터베이스를 Docker 및 docker-compose로 구�
 |--------|------|------|
 | psycopg2-binary | 2.9+ | PostgreSQL 데이터베이스 드라이버 |
 | gunicorn | 21+ | WSGI HTTP 서버 |
+| whitenoise | 6.11+ | Static 파일 서빙 (Gunicorn 환경) |
 
 ---
 
@@ -38,6 +39,7 @@ Django 앱과 PostgreSQL 데이터베이스를 Docker 및 docker-compose로 구�
 - 환경변수 기반 PostgreSQL 데이터베이스 설정 추가
 - `ALLOWED_HOSTS` 환경변수 지원
 - `STATIC_ROOT` 설정 추가 (collectstatic 지원)
+- `WhiteNoiseMiddleware` 추가 (Gunicorn에서 static 파일 서빙)
 
 ```python
 # 환경변수로 DB 설정 (PostgreSQL/SQLite 자동 전환)
